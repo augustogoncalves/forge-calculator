@@ -27,15 +27,26 @@
                 let where = $('input[name="MDSource"]:checked').val();
                 let type = $('#MDFileFormat').val();
                 let number = $('#MDCount').val();
-                let cost = (where == 'BIM360' ? 0 : 1) * ((new RegExp("RVT|NWC|NWD")).test(type) ? 1.5 : 0.2) * number;
-                updateTotal(cost);
-                $('#MDTable tr:last').after('<tr><td>' + where + '</td><td>' + type + '</td><td>' + number + '</td><td>' + cost + '</td><td><i class="far fa-trash-alt"></i></td></tr>');
+                let frequency = $('#MDFrequency').val();
+                let unitCost = (where == 'BIM360' ? 0 : 1) * ((new RegExp("RVT|NWC|NWD")).test(type) ? 1.5 : 0.2)
+                let totalCost = unitCost * number * frequency;
+                let rowId = 'costRow' + Date.now();
+                let pdf = (type == 'PDF' ? '<i class="far fa-info-circle" data-bs-toggle="modal" data-bs-target="#PDFNotice">' : '');
+                $('#MDTable tr:last').after('<tr id=' + rowId + '><td>' + where + '</td><td>' + type + '</td><td>' + number + ' x ' + frequency + ' = ' + number * frequency + '</td><td>' + number * frequency + ' x ' + unitCost + ' = ' + totalCost.toFixed(1) + ' ' + pdf + '</td><td><i class="far fa-trash-alt" onclick="deleteRow(\'' + rowId + '\', ' + totalCost + ')"></i></td></tr>');
+                updateTotal(totalCost);
             })
+
+
         })
 
         function updateTotal(add) {
             totalCost += add;
-            $('#TotalCost').html(totalCost + ' Cloud Credits');
+            $('#TotalCost').html(Math.abs(totalCost).toFixed(1) + ' Cloud Credits');
+        }
+
+        function deleteRow(rowId, cost) {
+            updateTotal(cost * -1);
+            $('#' + rowId).remove();
         }
     </script>
     <div class="container-sm">
@@ -46,7 +57,7 @@
         </div>
 
         <div class="row">
-            <div class="col">
+            <div class="col-10">
 
                 <div class="accordion" id="accordionExample">
                     <div class="accordion-item">
@@ -59,7 +70,8 @@
                         <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
                             data-bs-parent="#accordionExample">
                             <div class="accordion-body">
-                                Please specify where the files are hosted, extension and how many files per month.
+                                Please specify where the files are hosted, type, how many files and how often files are
+                                updated (per month).
                                 <hr>
                                 <div class="row">
                                     <div class="col">
@@ -82,22 +94,32 @@
 
                                     <div class="col">
 
-                                        <label for="exampleDataList" class="form-label">Select file extension</label>
-                                        <input class="form-control" list="datalistOptions" id="MDFileFormat"
-                                            placeholder="Type to search...">
-                                        <datalist id="datalistOptions">
-                                            <option value="RVT">
-                                            <option value="NWD/NWC">
-                                            <option value="DWG">
-                                            <option value="IAM/IPT">
-                                            <option value="DWF">
-                                        </datalist>
-
+                                        <label for="exampleDataList" class="form-label">File type</label>
+                                        <select class="form-select" aria-label="Default select example"
+                                            id="MDFileFormat">
+                                            <option value="RVT">Revit</option>
+                                            <option value="NWD/NWC">Navisworks</option>
+                                            <option value="DWG/DXF">AutoCAD</option>
+                                            <option value="IAM/IPT">Inventor</option>
+                                            <option value="DWF">DWF</option>
+                                            <option value="PDF">PDF</option>
+                                        </select>
                                     </div>
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="exampleFormControlInput1" class="form-label">How many</label>
+                                            <label for="exampleFormControlInput1" class="form-label">How many
+                                                files</label>
                                             <input type="number" class="form-control" id="MDCount" min="1" value="1">
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <label for="exampleFormControlInput1" class="form-label">How often is
+                                            updated</label>
+                                        <div class="input-group mb-3">
+
+                                            <input type="number" class="form-control" id="MDFrequency" min="1" value="1"
+                                                aria-describedby="basic-addon2">
+                                            <span class="input-group-text" id="basic-addon2">per month</span>
                                         </div>
                                     </div>
                                     <div class="col"><br /><button type="button" id="MDAdd"
@@ -110,7 +132,7 @@
                                         <tr>
                                             <th scope="col">Where</th>
                                             <th scope="col">Type</th>
-                                            <th scope="col">Number</th>
+                                            <th scope="col">Translations</th>
                                             <th scope="col">Cost</th>
                                             <th scope="col"></th>
                                         </tr>
@@ -154,11 +176,31 @@
                 </div>
 
             </div>
-            <div class="col">
+            <div class="col-2">
                 <center>
                     <h4>Total per month<br /><span class="badge bg-secondary" id="TotalCost">00 Cloud Credits</span>
                         </h1>
                 </center>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="PDFNotice" tabindex="-1" aria-labelledby="PDFModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="PDFModalLabel">About Viewer PDF support</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    PDF can be visualized using the Autodesk.PDF extension without translation, but requires the file to
+                    be hosted and served directly.
+                    <a href="https://forge.autodesk.com/en/docs/viewer/v7/reference/Extensions/PDFExtension/"
+                        target="_blank">Learn more</a>.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok, thanks.</button>
+                </div>
             </div>
         </div>
     </div>

@@ -38,12 +38,47 @@
                 $('#MDTable').show();
             })
 
+            $('#DAAdd').click(() => {
+                let engine = $('#DAEngine').val();
+                let time = $('#DATimeComplexity').val();
+                let frequency = $('#DAFrequency').val();
+                let cost = (engine == 'AutoCAD' ? 4 : 6);
+                let totalCost = cost * time / 60 / 60 * frequency;
+                let rowId = 'costRow' + Date.now();
+                $('#DATable tr:last').after('<tr id=' + rowId + '><td>' + engine + '</td><td>' + time + 's * ' + cost + '/hour = ' + (time / 60 / 60 * cost).toFixed(3) + '</td><td>' + frequency + '</td><td>' + totalCost.toFixed(3) + '</td><td><i class="far fa-trash-alt" onclick="deleteRow(\'' + rowId + '\', ' + totalCost + ')"></i></td></tr>');
+                updateTotal(totalCost);
+                $('#DATable').show();
+            })
+
+            $("#DAEngine").change(function () {
+                let min = DAComplexity[this.value].min;
+                let max = DAComplexity[this.value].max;
+                let median = DAComplexity[this.value].median;
+                $('#DATimeComplexity').attr('min', min);
+                $('#DATimeComplexity').attr('max', max);
+                $('#DATimeComplexity').val(median);
+                $('#ComplexityPreview').html(median);
+            }).change();
+
             $('#MDTable').hide();
+            $('#DATable').hide();
         })
+
+        // based on usage history
+        let DAComplexity = {
+            AutoCAD: { min: 3, max: 99, median: 9 },
+            Revit: { min: 11, max: 9677, median: 55 },
+            Inventor: { min: 3, max: 1345, median: 17 },
+            Max: { min: 48, max: 254, median: 90 }
+        }
+
+        function adjustComplexityRange() {
+
+        }
 
         function updateTotal(add) {
             totalCost += add;
-            $('#TotalCost').html(Math.abs(totalCost).toFixed(1) + ' Cloud Credits');
+            $('#TotalCost').html(totalCost.toFixed(3) + ' Cloud Credits');
         }
 
         function deleteRow(rowId, cost) {
@@ -59,17 +94,25 @@
                     title.html('About Viewer PDF support');
                     body.html('PDF can be visualized using the Autodesk.PDF extension without translation, but requires the file to be hosted and served directly. <a href="https://forge.autodesk.com/en/docs/viewer/v7/reference/Extensions/PDFExtension/" target="_blank">Learn more</a>.')
                     break;
-                case 'Source':
+                case 'MDSource':
                     title.html('Where is the file?');
                     body.html('Autodesk products, like BIM 360 Document Manager (Docs), automatically prepare files for viewing. <br/><br/>If the file is stored somewhere else, like OneDrive or Dropbox, it needs to be transfered to Forge OSS and then prepared for viewing.');
                     break;
-                    case 'Type':
+                case 'MDType':
                     title.html('Supported file formats');
                     body.html('Please refer to a complete <a href="https://forge.autodesk.com/en/docs/model-derivative/v2/developers_guide/supported-translations/" target="_blank">list of support formats</a>.')
                     break;
-                case 'Frequency':
+                case 'MDFrequency':
                     title.html('How often is the model updated?');
                     body.html('Each time the model is updated it needs to be prepared for viewing, in order to reflect the changes.');
+                    break;
+                case 'DAComplexity':
+                    title.html('Estimating Design Automation complexity');
+                    body.html('The execution time for Design Automation can vary significantly, depending on how big & complex are the models and how long it takes to execute the script or plugin. <br/><br/>For your reference, this slider shows the minimum and maximum durations observed for all Forge customers.<br/><br/>Recommendation: for small models with simple scripts, choose the lower values. For multiple & heavy models running complex code, select higher values.<br/><br/>Default value is the median.');
+                    break;
+                case 'DAFrequency':
+                    title.html('How often is this automation executed?');
+                    body.html('Consider how many models needs to be executed against this automation. <br/><br/>For instace: your automation checks every new Revit version uploaded, and your team updates models 15 days per day (x 30 days equals 450 executions per month).');
                     break;
             }
 
@@ -106,7 +149,7 @@
                                     <div class="col-3">
                                         <label for="exampleDataList" class="form-label">Source <i
                                                 class="fas fa-info-circle" style="cursor:help"
-                                                onclick="showHelp('Source')"></i></label>
+                                                onclick="showHelp('MDSource')"></i></label>
                                         <select class="form-select" aria-label="Default select example" id="MDSource">
                                             <option value="BIM360">BIM360 Docs</option>
                                             <option value="OneDrive">OneDrive</option>
@@ -118,7 +161,7 @@
                                     <div class="col-2">
                                         <label for="exampleDataList" class="form-label">File type <i
                                                 class="fas fa-info-circle" style="cursor:help"
-                                                onclick="showHelp('Type')"></i></label>
+                                                onclick="showHelp('MDType')"></i></label>
                                         <select class="form-select" aria-label="Default select example"
                                             id="MDFileFormat">
                                             <option value="RVT">Revit</option>
@@ -142,7 +185,7 @@
                                     <div class="col-3">
                                         <label for="exampleFormControlInput1" class="form-label">How often is
                                             updated <i class="fas fa-info-circle" style="cursor:help"
-                                                onclick="showHelp('Frequency')"></i></label>
+                                                onclick="showHelp('MDFrequency')"></i></label>
                                         <div class="input-group mb-3">
                                             <input type="number" class="form-control" id="MDFrequency" min="1" value="1"
                                                 aria-describedby="basic-addon2">
@@ -181,7 +224,60 @@
                         <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
                             data-bs-parent="#accordionExample">
                             <div class="accordion-body">
+                                <div class="accordion-body">
+                                    Please specify where the files are hosted, type, how many files and how often files
+                                    are
+                                    updated (per month).
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <label for="exampleDataList" class="form-label">Engine </label>
+                                            <select class="form-select" aria-label="Default select example"
+                                                id="DAEngine">
+                                                <option value="AutoCAD">AutoCAD</option>
+                                                <option value="Revit">Revit</option>
+                                                <option value="Inventor">Inventor</option>
+                                                <option value="Max">3ds Max</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="DATimeComplexity" class="form-label">How complex is the
+                                                execution? <i class="fas fa-info-circle" style="cursor:help"
+                                                    onclick="showHelp('DAComplexity')"></i></label>
+                                            <input type="range" class="form-range" id="DATimeComplexity" min="3"
+                                                max="99" onInput="$('#ComplexityPreview').html($(this).val())">
+                                            <span id="ComplexityPreview"></span> seconds
+                                        </div>
+                                        <div class="col-3">
+                                            <label for="exampleFormControlInput1" class="form-label">How often is
+                                                executed <i class="fas fa-info-circle" style="cursor:help"
+                                                    onclick="showHelp('DAFrequency')"></i></label>
+                                            <div class="input-group mb-3">
+                                                <input type="number" class="form-control" id="DAFrequency" min="1"
+                                                    value="1" aria-describedby="basic-addon2">
+                                                <span class="input-group-text" id="basic-addon2">per month</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-1" style="margin-top: 33px;"><button type="button" id="DAAdd"
+                                                class="btn btn-primary">Add</button>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                    <table class="table" id="DATable">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Engine</th>
+                                                <th scope="col">Unit cost</th>
+                                                <th scope="col">Frequency</th>
+                                                <th scope="col">Cost</th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
 
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -40,9 +40,11 @@
 
             $('#DAAdd').click(() => {
                 let engine = $('#DAEngine').val();
-                let time = $('#DATimeComplexity').val();
+                let size = Number.parseInt($('#DASize').val());
+                let complexity = $('#DAComplexity').val();
                 let frequency = $('#DAFrequency').val();
                 let cost = (engine == 'AutoCAD' ? 4 : 6);
+                time = getTime(engine, size, complexity);
                 let totalCost = cost * time / 60 / 60 * frequency;
                 let rowId = 'costRow' + Date.now();
                 $('#DATable tr:last').after('<tr id=' + rowId + '><td>' + engine + '</td><td>' + time + 's * ' + cost + '/hour = ' + (time / 60 / 60 * cost).toFixed(3) + '</td><td>' + frequency + '</td><td>' + totalCost.toFixed(3) + '</td><td><i class="far fa-trash-alt" onclick="deleteRow(\'' + rowId + '\', ' + totalCost + ')"></i></td></tr>');
@@ -50,7 +52,7 @@
                 $('#DATable').show();
             })
 
-            $("#DAEngine").change(function () {
+            /*$("#DAEngine").change(function () {
                 let min = DAComplexity[this.value].min;
                 let max = DAComplexity[this.value].max;
                 let median = DAComplexity[this.value].median;
@@ -58,7 +60,7 @@
                 $('#DATimeComplexity').attr('max', max);
                 $('#DATimeComplexity').val(median);
                 $('#ComplexityPreview').html(median);
-            }).change();
+            }).change();*/
 
             $('#MDTable').hide();
             $('#DATable').hide();
@@ -66,14 +68,32 @@
 
         // based on usage history
         let DAComplexity = {
-            AutoCAD: { min: 3, max: 99, median: 9 },
-            Revit: { min: 11, max: 9677, median: 55 },
-            Inventor: { min: 3, max: 1345, median: 17 },
-            Max: { min: 48, max: 254, median: 90 }
+            Max: { min: 48, max: 232/*254*/, median: 90 },
+            AutoCAD: { min: 3, max: 26/*99*/, median: 9 },
+            Inventor: { min: 3, max: 208/*1345*/, median: 17 },
+            Revit: [
+                {
+                    size: { min: 0, max: 10 },
+                    min: 3, median: 21, avg: 35, perc95: 82, max: 5416
+                },
+                {
+                    size: { min: 10, max: 20 },
+                    min: 14, median: 71, avg: 243, perc95: 835, max: 3985
+                },
+                {
+                    size: { min: 20, max: 30 },
+                    min: 14, median: 49, avg: 98, perc95: 289, max: 1274
+                }]
+
         }
 
-        function adjustComplexityRange() {
-
+        function getTime(engine, size, complexity) {
+            for (var c = 0; c < DAComplexity[engine].length; c++) {
+                let record = DAComplexity[engine][c];
+                if (size > record.size.min && size <= record.size.max) {
+                    return record[complexity];
+                }
+            }
         }
 
         function updateTotal(add) {
@@ -106,13 +126,23 @@
                     title.html('How often is the model updated?');
                     body.html('Each time the model is updated it needs to be prepared for viewing, in order to reflect the changes.');
                     break;
+                case 'DASize':
+                    title.html('File size');
+                    body.html('The file size helps estimate the execution time based on thousands of other jobs. Larger files usually takes longer to open and execute automations. Use a values as close as possible.');
+                    break;
                 case 'DAComplexity':
-                    title.html('Estimating Design Automation complexity');
-                    body.html('The execution time for Design Automation can vary significantly, depending on how big & complex are the models and how long it takes to execute the script or plugin. <br/><br/>For your reference, this slider shows the minimum and maximum durations observed for all Forge customers.<br/><br/>Recommendation: for small models with simple scripts, choose the lower values. For multiple & heavy models running complex code, select higher values.<br/><br/>Default value is the median.');
+                    title.html('Code complexity');
+                    body.html('Based on thousands of other Design Automation executions, the suggested complexities are the following observed values: <ul><li><strong>Super simple</strong>: mininum.</li><li><strong>Simple</strong>: median (50% of all excutions).</li><li><strong>Average</strong>: average time.</li><li><strong>Complext</strong>: percentile 95 (95% of all executions).</li><li><strong>Super complex</strong>: maximum.</li></ul>');
                     break;
                 case 'DAFrequency':
                     title.html('How often is this automation executed?');
                     body.html('Consider how many models needs to be executed against this automation. <br/><br/>For instace: your automation checks every new Revit version uploaded, and your team updates models 15 days per day (x 30 days equals 450 executions per month).');
+                    break;
+                case 'Disclaimer':
+                    title.html('Disclaimer');
+                    body.html('This Forge Cloud Credits Estimator is for informational and estimation purposes only and should not be relied upon when making a purchasing decision. Total amounts shown in the Estimator are based on various inputs and factors, including the then-current price list, only some of which are stated in the Estimator. As a result the amounts actually charged when any given customer purchases Forge Cloud Credits may differ materially from the total amounts estimated in the Forge Cloud Credits Estimator.<br/><br/>TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE OFFERINGS ARE PROVIDED “AS IS,” AND AUTODESK MAKES, AND YOU RECEIVE, NO WARRANTIES, REPRESENTATIONS, CONDITIONS OR COMMITMENTS OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE ESTIMATOR OR ANY OUTPUT THEREOF, INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY, SATISFACTORY QUALITY, FITNESS FOR A PARTICULAR PURPOSE OR NON‑INFRINGEMENT OR OTHER WARRANTIES OR CONDITIONS IMPLIED BY STATUTE, OR ANY WARRANTIES OR CONDITIONS BASED ON A COURSE OF DEALING, USAGE OF TRADE OR INDUSTRY STANDARDS.<br/><br/>WITHOUT LIMITATION AS TO THE GENERALITY OF THE FOREGOING, AUTODESK DOES NOT WARRANT OR OTHERWISE COMMIT THAT:<br/>- THE ESTIMATOR OR ANY OUTPUT THEREOF, OR THE ACCESS THERETO OR USE THEREOF, WILL BE AVAILABLE, UNINTERUPTED, ERROR-FREE, SECURE, ACCURATE, RELIABLE OR COMPLETE;<br/>- THE ESTIMATOR WILL MEET ANY PARTICULAR PERFORMANCE OR AVAILABILITY CRITERIA;OR<br/>- ERRORS WILL BE CORRECTED OR ANY PARTICULAR SUPPORT REQUESTS WILL BE RESOLVED TO MEET YOUR NEEDS. ');
+                    break;
+                default:
                     break;
             }
 
@@ -147,8 +177,7 @@
                             data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 Please specify where the files are hosted, type, how many files and how often files
-                                are
-                                updated (per month).
+                                are updated (per month).
                                 <hr>
                                 <div class="row">
                                     <div class="col-3">
@@ -229,29 +258,41 @@
                             data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <div class="accordion-body">
-                                    Please specify where the files are hosted, type, how many files and how often
-                                    files
-                                    are
-                                    updated (per month).
+                                    Please select the engine and how complex is the execution.
                                     <hr>
                                     <div class="row">
                                         <div class="col-2">
                                             <label for="exampleDataList" class="form-label">Engine </label>
                                             <select class="form-select" aria-label="Default select example"
                                                 id="DAEngine">
-                                                <option value="AutoCAD">AutoCAD</option>
                                                 <option value="Revit">Revit</option>
+                                                <!--<option value="AutoCAD">AutoCAD</option>
                                                 <option value="Inventor">Inventor</option>
-                                                <option value="Max">3ds Max</option>
+                                                <option value="Max">3ds Max</option>-->
                                             </select>
                                         </div>
-                                        <div class="col-6">
+                                        <div class="col-2">
+                                            <label for="exampleFormControlInput1" class="form-label">File size <i
+                                                    class="fas fa-info-circle" style="cursor:help"
+                                                    onclick="showHelp('DASize')"></i></label>
+                                            <div class="input-group mb-3">
+                                                <input type="number" class="form-control" id="DASize" min="1" value="1"
+                                                    aria-describedby="basic-addon2">
+                                                <span class="input-group-text" id="basic-addon2">MBs</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
                                             <label for="DATimeComplexity" class="form-label">How complex is the
-                                                execution? <i class="fas fa-info-circle" style="cursor:help"
+                                                code? <i class="fas fa-info-circle" style="cursor:help"
                                                     onclick="showHelp('DAComplexity')"></i></label>
-                                            <input type="range" class="form-range" id="DATimeComplexity" min="3"
-                                                max="99" onInput="$('#ComplexityPreview').html($(this).val())">
-                                            <span id="ComplexityPreview"></span> seconds
+                                            <select class="form-select" aria-label="Default select example"
+                                                id="DAComplexity">
+                                                <option value="min">Super simple</option>
+                                                <option value="median">Simple</option>
+                                                <option value="avg">Average</option>
+                                                <option value="perc95">Complex</option>
+                                                <option value="max">Super complex</option>
+                                            </select>
                                         </div>
                                         <div class="col-3">
                                             <label for="exampleFormControlInput1" class="form-label">How often is
@@ -304,7 +345,8 @@
             <div class="col-2">
                 <center>
                     <h4>Total per month<br /><span class="badge bg-secondary" id="TotalCost">00 Cloud Credits</span>
-                        </h1> <br /></br> <span><a href="https://forge.autodesk.com/pricing"
+                        </h1> <br /></br> <span onclick="showHelp('Disclaimer')" style="cursor:pointer;"><a
+                                href="#">Disclaimer</a></span><br /> <span><a href="https://forge.autodesk.com/pricing"
                                 target="_blank">Pricing</a></span>
                 </center>
             </div>

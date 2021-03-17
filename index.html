@@ -142,6 +142,10 @@
                     title.html('Disclaimer');
                     body.html('This Forge Cloud Credits Estimator is for informational and estimation purposes only and should not be relied upon when making a purchasing decision. Total amounts shown in the Estimator are based on various inputs and factors, including the then-current price list, only some of which are stated in the Estimator. As a result the amounts actually charged when any given customer purchases Forge Cloud Credits may differ materially from the total amounts estimated in the Forge Cloud Credits Estimator.<br/><br/>TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE OFFERINGS ARE PROVIDED “AS IS,” AND AUTODESK MAKES, AND YOU RECEIVE, NO WARRANTIES, REPRESENTATIONS, CONDITIONS OR COMMITMENTS OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE ESTIMATOR OR ANY OUTPUT THEREOF, INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY, SATISFACTORY QUALITY, FITNESS FOR A PARTICULAR PURPOSE OR NON‑INFRINGEMENT OR OTHER WARRANTIES OR CONDITIONS IMPLIED BY STATUTE, OR ANY WARRANTIES OR CONDITIONS BASED ON A COURSE OF DEALING, USAGE OF TRADE OR INDUSTRY STANDARDS.<br/><br/>WITHOUT LIMITATION AS TO THE GENERALITY OF THE FOREGOING, AUTODESK DOES NOT WARRANT OR OTHERWISE COMMIT THAT:<br/>- THE ESTIMATOR OR ANY OUTPUT THEREOF, OR THE ACCESS THERETO OR USE THEREOF, WILL BE AVAILABLE, UNINTERUPTED, ERROR-FREE, SECURE, ACCURATE, RELIABLE OR COMPLETE;<br/>- THE ESTIMATOR WILL MEET ANY PARTICULAR PERFORMANCE OR AVAILABILITY CRITERIA;OR<br/>- ERRORS WILL BE CORRECTED OR ANY PARTICULAR SUPPORT REQUESTS WILL BE RESOLVED TO MEET YOUR NEEDS. ');
                     break;
+                case 'More':
+                    title.html('Learn more');
+                    body.html('Additional learning material: <br/><br/><a href="https://forge.autodesk.com/blog/forge-pricing-explained-1-how-access-forge" target="_blank">How to Access Forge</a><br/><a href="https://forge.autodesk.com/blog/forge-pricing-explained-2-forge-and-cloud-credits" target="_blank">Cloud Credits explained</a><br/><a href="https://forge.autodesk.com/blog/forge-pricing-explained-3-what-does-each-forge-api-cost" target="_blank">What does each Forge API cost?</a><br/><a href="https://forge.autodesk.com/blog/estimate-design-automation-costs" target="_blank">Design Automation cost</a>');
+                    break;
                 default:
                     break;
             }
@@ -347,7 +351,8 @@
                     <h4>Total per month<br /><span class="badge bg-secondary" id="TotalCost">00 Cloud Credits</span>
                         </h1> <br /></br> <span onclick="showHelp('Disclaimer')" style="cursor:pointer;"><a
                                 href="#">Disclaimer</a></span><br /> <span><a href="https://forge.autodesk.com/pricing"
-                                target="_blank">Pricing</a></span>
+                                target="_blank">Pricing</a><br /></span> <span onclick="showHelp('More')"
+                            style="cursor:pointer;"><a href="#">Learn more</a></span>
                 </center>
             </div>
         </div>

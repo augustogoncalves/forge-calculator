@@ -52,6 +52,18 @@
                 $('#DATable').show();
             })
 
+            $('#RCAdd').click(() => {
+                let size = Number.parseInt($('#RCSize').val());
+                let quantity = Number.parseInt($('#RCQuantity').val());
+                let frequency = Number.parseInt($('#RCFrequency').val());
+                let cost = (size * quantity) / 1024 * 3.5;
+                let totalCost = cost * frequency;
+                let rowId = 'costRow' + Date.now();
+                $('#RCTable tr:last').after('<tr id=' + rowId + '><td>' + quantity + ' x ' + size + ' = ' + (quantity * size / 1024).toFixed(2) + '</td><td>' + (quantity * size / 1024).toFixed(2) + ' * ' + frequency + ' = ' + ((quantity * size / 1024) * frequency).toFixed(2) + '</td><td>' + ((quantity * size / 1024) * frequency).toFixed(2) + ' * 3.5 = ' + (cost * frequency).toFixed(2) + '</td><td><i class="far fa-trash-alt" onclick="deleteRow(\'' + rowId + '\', ' + totalCost + ')"></i></td></tr>');
+                updateTotal(totalCost);
+                $('#RCTable').show();
+            })
+
             /*$("#DAEngine").change(function () {
                 let min = DAComplexity[this.value].min;
                 let max = DAComplexity[this.value].max;
@@ -64,13 +76,14 @@
 
             $('#MDTable').hide();
             $('#DATable').hide();
+            $('#RCTable').hide();
         })
 
         // based on usage history
         let DAComplexity = {
-            Max: { min: 48, max: 232/*254*/, median: 90 },
-            AutoCAD: { min: 3, max: 26/*99*/, median: 9 },
-            Inventor: { min: 3, max: 208/*1345*/, median: 17 },
+            //Max: { min: 48, max: 232/*254*/, median: 90 },
+            //AutoCAD: { min: 3, max: 26/*99*/, median: 9 },
+            //Inventor: { min: 3, max: 208/*1345*/, median: 17 },
             Revit: [
                 {
                     size: { min: 0, max: 10 },
@@ -98,7 +111,7 @@
 
         function updateTotal(add) {
             totalCost += add;
-            $('#TotalCost').html(totalCost.toFixed(3) + ' Cloud Credits');
+            $('#TotalCost').html(Math.abs(totalCost).toFixed(3) + ' Cloud Credits');
         }
 
         function deleteRow(rowId, cost) {
@@ -127,16 +140,20 @@
                     body.html('Each time the model is updated it needs to be prepared for viewing, in order to reflect the changes.');
                     break;
                 case 'DASize':
-                    title.html('File size');
-                    body.html('The file size helps estimate the execution time based on thousands of other jobs. Larger files usually takes longer to open and execute automations. Use a values as close as possible.');
+                    title.html('Input file size');
+                    body.html('Larger files usually takes longer to open and execute automations. This is the total input size (in case of multiple files).<br/><br/>Based on thousands of other Design Automation executions, it will cross reference the size and complexity.');
                     break;
                 case 'DAComplexity':
-                    title.html('Code complexity');
-                    body.html('Based on thousands of other Design Automation executions, the suggested complexities are the following observed values: <ul><li><strong>Super simple</strong>: mininum.</li><li><strong>Simple</strong>: median (50% of all excutions).</li><li><strong>Average</strong>: average time.</li><li><strong>Complext</strong>: percentile 95 (95% of all executions).</li><li><strong>Super complex</strong>: maximum.</li></ul>');
+                    title.html('Script/code complexity');
+                    body.html('Based on thousands of other Design Automation executions, the suggested complexities are typical values observed on Design Automation services. <br/><br/>These are statistical values for your reference: <ul><li><strong>Super simple</strong>: mininum.</li><li><strong>Simple</strong>: median (50% of all excutions).</li><li><strong>Average</strong>: average time.</li><li><strong>Complex</strong>: percentile 95 (95% of all executions).</li><li><strong>Super complex</strong>: maximum.</li></ul>If not sure, conside selecting <strong>Simple (median)</strong>, which is true for 50% of all Design Automation executions.<br/><br/>The complexity will be cross referenced with file size.');
                     break;
                 case 'DAFrequency':
                     title.html('How often is this automation executed?');
                     body.html('Consider how many models needs to be executed against this automation. <br/><br/>For instace: your automation checks every new Revit version uploaded, and your team updates models 15 days per day (x 30 days equals 450 executions per month).');
+                    break;
+                case 'RCFrequency':
+                    title.html('How often are pictures updated?');
+                    body.html('When pictures are updated, you may need to execute the API to generate a new mesh.');
                     break;
                 case 'Disclaimer':
                     title.html('Disclaimer');
@@ -190,6 +207,7 @@
                                                 onclick="showHelp('MDSource')"></i></label>
                                         <select class="form-select" aria-label="Default select example" id="MDSource">
                                             <option value="BIM360">BIM360 Docs</option>
+                                            <option value="Fusion">Fusion 360</option>
                                             <option value="OneDrive">OneDrive</option>
                                             <option value="Dropbox">Dropbox</option>
                                             <option value="Local">Local drive</option>
@@ -210,6 +228,7 @@
                                             <option value="DWF/DWFX">DWF/DWFx</option>
                                             <option value="PDF">PDF</option>
                                             <option value="STEP/OBJ">STEP/OBJ</option>
+                                            <option value="IFC">IFC</option>
                                             <option value="Other">Other</option>
                                         </select>
                                     </div>
@@ -262,17 +281,17 @@
                             data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <div class="accordion-body">
-                                    Please select the engine and how complex is the execution.
+                                    Please select the engine, total file size, how complex is the script/code and how ofter is executed (per month).
                                     <hr>
                                     <div class="row">
                                         <div class="col-2">
                                             <label for="exampleDataList" class="form-label">Engine </label>
                                             <select class="form-select" aria-label="Default select example"
                                                 id="DAEngine">
+                                                <option value="AutoCAD" disabled>AutoCAD</option>
                                                 <option value="Revit">Revit</option>
-                                                <!--<option value="AutoCAD">AutoCAD</option>
-                                                <option value="Inventor">Inventor</option>
-                                                <option value="Max">3ds Max</option>-->
+                                                <option value="Inventor" disabled>Inventor</option>
+                                                <option value="Max" disabled>3ds Max</option>
                                             </select>
                                         </div>
                                         <div class="col-2">
@@ -281,13 +300,13 @@
                                                     onclick="showHelp('DASize')"></i></label>
                                             <div class="input-group mb-3">
                                                 <input type="number" class="form-control" id="DASize" min="1" value="1"
-                                                    aria-describedby="basic-addon2">
-                                                <span class="input-group-text" id="basic-addon2">MBs</span>
+                                                    max="30" aria-describedby="basic-addon2">
+                                                <span class="input-group-text" id="basic-addon2">MB</span>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <label for="DATimeComplexity" class="form-label">How complex is the
-                                                code? <i class="fas fa-info-circle" style="cursor:help"
+                                                execution? <i class="fas fa-info-circle" style="cursor:help"
                                                     onclick="showHelp('DAComplexity')"></i></label>
                                             <select class="form-select" aria-label="Default select example"
                                                 id="DAComplexity">
@@ -340,6 +359,58 @@
                         <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
                             data-bs-parent="#accordionExample">
                             <div class="accordion-body">
+                                Please specify how many pictures used, the picture quality (in Megapixel) and how often
+                                pictures are updated (per month).
+                                <hr>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <label for="exampleFormControlInput1" class="form-label">How many
+                                            pictures?</label>
+                                        <div class="input-group mb-3">
+                                            <input type="number" class="form-control" id="RCQuantity" min="3" value="10"
+                                                max="1000" max="30" aria-describedby="basic-addon2">
+                                            <span class="input-group-text" id="basic-addon2">pictures</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <label for="exampleFormControlInput1" class="form-label">Image quality</label>
+                                        <div class="input-group mb-3">
+                                            <input type="number" class="form-control" id="RCSize" min="1" value="12"
+                                                aria-describedby="basic-addon2">
+                                            <span class="input-group-text" id="basic-addon2">Megapixel</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="exampleFormControlInput1" class="form-label">How often are pictures
+                                            updated?
+                                            <i class="fas fa-info-circle" style="cursor:help"
+                                                onclick="showHelp('RCFrequency')"></i></label>
+                                        <div class="input-group mb-3">
+                                            <input type="number" class="form-control" id="RCFrequency" min="1" value="1"
+                                                aria-describedby="basic-addon2">
+                                            <span class="input-group-text" id="basic-addon2">per month</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-1">
+
+                                    </div>
+                                    <div class="col-1" style="margin-top: 33px;"><button type="button" id="RCAdd"
+                                            class="btn btn-primary">Add</button>
+                                    </div>
+                                </div>
+                                <hr />
+                                <table class="table" id="RCTable">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Pictures (Gigapixel)</th>
+                                            <th scope="col">Frequency</th>
+                                            <th scope="col">Cost</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

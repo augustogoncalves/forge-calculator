@@ -1,0 +1,8 @@
+{"preview":false,"result":{"size":"200-300","min(time)":"27.6680","median(time)":"53.2200","avg(time)":"148.934985940246","perc95(time)":"544.0328","max(time)":"2518.6910"}}
+{"preview":false,"result":{"size":"300-400","min(time)":"42.1580","median(time)":"303.4012","avg(time)":"417.75474889867866","perc95(time)":"1398.1297","max(time)":"1857.6380"}}
+{"preview":false,"result":{"size":"400-500","min(time)":"49.6370","median(time)":"228.2790","avg(time)":"239.090690909091","perc95(time)":"456.3621","max(time)":"602.9720"}}
+{"preview":false,"result":{"size":"500-600","min(time)":"64.1870","median(time)":"220.7630","avg(time)":"343.9292857142857","perc95(time)":"826.2684","max(time)":"853.4590"}}
+{"preview":false,"result":{"size":"600-700","min(time)":"73.3590","median(time)":"328.9100","avg(time)":"389.2713000000001","perc95(time)":"788.0941","max(time)":"1927.3140"}}
+{"preview":false,"result":{"size":"700-800","min(time)":"70.8880","median(time)":"364.0900","avg(time)":"531.8789024390243","perc95(time)":"1145.9290","max(time)":"1282.7200"}}
+{"preview":false,"result":{"size":"800-900","min(time)":"112.7280","median(time)":"498.5045","avg(time)":"603.1582777777778","perc95(time)":"1054.3510","max(time)":"1063.5820"}}
+{"preview":false,"lastrow":true,"result":{"size":"900-1000","min(time)":"238.0980","median(time)":"400.5470","avg(time)":"635.1286666666666","perc95(time)":"1604.4423","max(time)":"1952.8870"}}

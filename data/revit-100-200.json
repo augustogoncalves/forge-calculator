@@ -1,0 +1,5 @@
+{"preview":false,"result":{"size":"100-120","min(time)":"19.9040","median(time)":"84.8445","avg(time)":"136.62410975609765","perc95(time)":"469.4603","max(time)":"1536.6570"}}
+{"preview":false,"result":{"size":"120-140","min(time)":"20.7140","median(time)":"75.7771","avg(time)":"157.98877868852455","perc95(time)":"358.8430","max(time)":"9677.7850"}}
+{"preview":false,"result":{"size":"140-160","min(time)":"34.8150","median(time)":"133.3427","avg(time)":"165.7661612903226","perc95(time)":"461.9040","max(time)":"1051.1820"}}
+{"preview":false,"result":{"size":"160-180","min(time)":"31.8490","median(time)":"145.3660","avg(time)":"297.0035520833334","perc95(time)":"1034.8125","max(time)":"2267.7880"}}
+{"preview":false,"lastrow":true,"result":{"size":"180-200","min(time)":"26.8340","median(time)":"38.7998","avg(time)":"118.47634057971015","perc95(time)":"416.1273","max(time)":"3514.7420"}}

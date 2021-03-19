@@ -1,0 +1,3 @@
+{"preview":false,"result":{"size":"1000-1500","min(time)":"76.7030","median(time)":"499.7105","avg(time)":"620.0890942028987","perc95(time)":"1728.5388","max(time)":"1994.9600"}}
+{"preview":false,"result":{"size":"1500-2000","min(time)":"107.8730","median(time)":"462.1425","avg(time)":"673.9022916666665","perc95(time)":"1741.1026","max(time)":"1755.9140"}}
+{"preview":false,"lastrow":true,"result":{"size":"2000-2500","min(time)":"158.9290","median(time)":"266.6645","avg(time)":"508.68887499999994","perc95(time)":"1263.3928","max(time)":"1437.4120"}}

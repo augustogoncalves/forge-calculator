@@ -23,7 +23,7 @@
 
     <script>
         let totalCost = 0;
-        $(document).ready(() => {
+        $(document).ready(async () => {
             $('#MDAdd').click(() => {
                 let where = $('#MDSource').val();
                 let type = $('#MDFileFormat').val();
@@ -44,7 +44,11 @@
                 let complexity = $('#DAComplexity').val();
                 let frequency = $('#DAFrequency').val();
                 let cost = (engine == 'AutoCAD' ? 4 : 6);
-                time = getTime(engine, size, complexity);
+                let time = getTime(engine, size, complexity);
+                if (time == 0) {
+                    showHelp('DASizeNotAvailable');
+                    return;
+                }
                 let totalCost = cost * time / 60 / 60 * frequency;
                 let rowId = 'costRow' + Date.now();
                 $('#DATable tr:last').after('<tr id=' + rowId + '><td>' + engine + '</td><td>' + time + 's * ' + cost + '/hour = ' + (time / 60 / 60 * cost).toFixed(3) + '</td><td>' + frequency + '</td><td>' + totalCost.toFixed(3) + '</td><td><i class="far fa-trash-alt" onclick="deleteRow(\'' + rowId + '\', ' + totalCost + ')"></i></td></tr>');
@@ -64,19 +68,11 @@
                 $('#RCTable').show();
             })
 
-            /*$("#DAEngine").change(function () {
-                let min = DAComplexity[this.value].min;
-                let max = DAComplexity[this.value].max;
-                let median = DAComplexity[this.value].median;
-                $('#DATimeComplexity').attr('min', min);
-                $('#DATimeComplexity').attr('max', max);
-                $('#DATimeComplexity').val(median);
-                $('#ComplexityPreview').html(median);
-            }).change();*/
-
             $('#MDTable').hide();
             $('#DATable').hide();
             $('#RCTable').hide();
+
+            await getStats();
         })
 
         // based on usage history
@@ -84,20 +80,32 @@
             //Max: { min: 48, max: 232/*254*/, median: 90 },
             //AutoCAD: { min: 3, max: 26/*99*/, median: 9 },
             //Inventor: { min: 3, max: 208/*1345*/, median: 17 },
-            Revit: [
-                {
-                    size: { min: 0, max: 10 },
-                    min: 3, median: 21, avg: 35, perc95: 82, max: 5416
-                },
-                {
-                    size: { min: 10, max: 20 },
-                    min: 14, median: 71, avg: 243, perc95: 835, max: 3985
-                },
-                {
-                    size: { min: 20, max: 30 },
-                    min: 14, median: 49, avg: 98, perc95: 289, max: 1274
-                }]
+            Revit: []
 
+        }
+
+        async function getStats() {
+            let files = {};
+            files['Revit'] = ['revit-0-100', 'revit-100-200', 'revit-200-1000', 'revit-1000-2500'];
+
+            for (let e in files) {
+                for (let f in files[e]) {
+                    let req = await fetch('data/' + files[e][f] + '.json');
+                    if (!req.ok) return;
+
+                    data = (await req.text()).replaceAll('}}', '}},');
+                    data = JSON.parse('[' + data.substring(0, data.length - 2) + ']');
+
+                    data.forEach((record) => {
+                        var size = record.result.size.split('-');
+
+                        DAComplexity[e].push({
+                            size: { min: Number.parseInt(size[0]), max: Number.parseInt(size[1]) },
+                            min: Number.parseInt(record.result['min(time)']), median: Number.parseInt(record.result['median(time)']), avg: Number.parseInt(record.result['avg(time)']), perc95: Number.parseInt(record.result['perc95(time)']), max: Number.parseInt(record.result['max(time)'])
+                        });
+                    })
+                }
+            }
         }
 
         function getTime(engine, size, complexity) {
@@ -107,6 +115,7 @@
                     return record[complexity];
                 }
             }
+            return 0;
         }
 
         function updateTotal(add) {
@@ -158,6 +167,10 @@
                 case 'Disclaimer':
                     title.html('Disclaimer');
                     body.html('This Forge Cloud Credits Estimator is for informational and estimation purposes only and should not be relied upon when making a purchasing decision. Total amounts shown in the Estimator are based on various inputs and factors, including the then-current price list, only some of which are stated in the Estimator. As a result the amounts actually charged when any given customer purchases Forge Cloud Credits may differ materially from the total amounts estimated in the Forge Cloud Credits Estimator.<br/><br/>TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE OFFERINGS ARE PROVIDED “AS IS,” AND AUTODESK MAKES, AND YOU RECEIVE, NO WARRANTIES, REPRESENTATIONS, CONDITIONS OR COMMITMENTS OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE ESTIMATOR OR ANY OUTPUT THEREOF, INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY, SATISFACTORY QUALITY, FITNESS FOR A PARTICULAR PURPOSE OR NON‑INFRINGEMENT OR OTHER WARRANTIES OR CONDITIONS IMPLIED BY STATUTE, OR ANY WARRANTIES OR CONDITIONS BASED ON A COURSE OF DEALING, USAGE OF TRADE OR INDUSTRY STANDARDS.<br/><br/>WITHOUT LIMITATION AS TO THE GENERALITY OF THE FOREGOING, AUTODESK DOES NOT WARRANT OR OTHERWISE COMMIT THAT:<br/>- THE ESTIMATOR OR ANY OUTPUT THEREOF, OR THE ACCESS THERETO OR USE THEREOF, WILL BE AVAILABLE, UNINTERUPTED, ERROR-FREE, SECURE, ACCURATE, RELIABLE OR COMPLETE;<br/>- THE ESTIMATOR WILL MEET ANY PARTICULAR PERFORMANCE OR AVAILABILITY CRITERIA;OR<br/>- ERRORS WILL BE CORRECTED OR ANY PARTICULAR SUPPORT REQUESTS WILL BE RESOLVED TO MEET YOUR NEEDS. ');
+                    break;
+                case 'DASizeNotAvailable':
+                    title.html('Information not available');
+                    body.html('Sorry we don\'t have enough data to estimate for that file size');
                     break;
                 case 'More':
                     title.html('Learn more');
@@ -281,7 +294,8 @@
                             data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <div class="accordion-body">
-                                    Please select the engine, total file size, how complex is the script/code and how ofter is executed (per month).
+                                    Please select the engine, total file size, how complex is the script/code and how
+                                    ofter is executed (per month).
                                     <hr>
                                     <div class="row">
                                         <div class="col-2">

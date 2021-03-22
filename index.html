@@ -41,7 +41,9 @@
             $('#DAAdd').click(() => {
                 let engine = $('#DAEngine').val();
                 let size = Number.parseInt($('#DASize').val());
+                let sizeLabel = $('#DASizeLabel').text();
                 let complexity = $('#DAComplexity').val();
+                let complexityLabel = $('#DAComplexity option:selected').text();
                 let frequency = $('#DAFrequency').val();
                 let cost = (engine == 'AutoCAD' ? 4 : 6);
                 let time = getTime(engine, size, complexity);
@@ -51,7 +53,7 @@
                 }
                 let totalCost = cost * time / 60 / 60 * frequency;
                 let rowId = 'costRow' + Date.now();
-                $('#DATable tr:last').after('<tr id=' + rowId + '><td>' + engine + '</td><td>' + time + 's * ' + cost + '/hour = ' + (time / 60 / 60 * cost).toFixed(3) + '</td><td>' + frequency + '</td><td>' + totalCost.toFixed(3) + '</td><td><i class="far fa-trash-alt" onclick="deleteRow(\'' + rowId + '\', ' + totalCost + ')"></i></td></tr>');
+                $('#DATable tr:last').after('<tr id=' + rowId + '><td>' + engine + '</td><td>' + size + sizeLabel + ' - ' + complexityLabel + '</td><td>' + time + 's * ' + cost + '/hour = ' + (time / 60 / 60 * cost).toFixed(3) + '</td><td>' + frequency + '</td><td>' + totalCost.toFixed(3) + '</td><td><i class="far fa-trash-alt" onclick="deleteRow(\'' + rowId + '\', ' + totalCost + ')"></i></td></tr>');
                 updateTotal(totalCost);
                 $('#DATable').show();
             })
@@ -68,6 +70,19 @@
                 $('#RCTable').show();
             })
 
+                * $("#DAEngine").change(function () {
+                    switch (this.value) {
+                        case 'Revit':
+                            $('#DASizeLabel').text('MB');
+                            $('#DASize').attr('step', 10);
+                            break;
+                        case 'AutoCAD': case 'Inventor':
+                            $('#DASizeLabel').text('KB');
+                            $('#DASize').attr('step', 100);
+                            break;
+                    }
+                }).change();
+
             $('#MDTable').hide();
             $('#DATable').hide();
             $('#RCTable').hide();
@@ -77,16 +92,16 @@
 
         // based on usage history
         let DAComplexity = {
-            //Max: { min: 48, max: 232/*254*/, median: 90 },
-            //AutoCAD: { min: 3, max: 26/*99*/, median: 9 },
-            //Inventor: { min: 3, max: 208/*1345*/, median: 17 },
-            Revit: []
-
+            AutoCAD: [],
+            Revit: [],
+            Inventor: []
         }
 
         async function getStats() {
             let files = {};
+            files['AutoCAD'] = ['autocad-0-5000', 'autocad-5000-10000'];
             files['Revit'] = ['revit-0-100', 'revit-100-200', 'revit-200-1000', 'revit-1000-2500'];
+            files['Inventor'] = ['inventor-0-2000', 'inventor-2000-6000', 'inventor-6000-20000', 'inventor-20000-100000'];
 
             for (let e in files) {
                 for (let f in files[e]) {
@@ -302,9 +317,9 @@
                                             <label for="exampleDataList" class="form-label">Engine </label>
                                             <select class="form-select" aria-label="Default select example"
                                                 id="DAEngine">
-                                                <option value="AutoCAD" disabled>AutoCAD</option>
+                                                <option value="AutoCAD">AutoCAD</option>
                                                 <option value="Revit">Revit</option>
-                                                <option value="Inventor" disabled>Inventor</option>
+                                                <option value="Inventor">Inventor</option>
                                                 <option value="Max" disabled>3ds Max</option>
                                             </select>
                                         </div>
@@ -314,8 +329,8 @@
                                                     onclick="showHelp('DASize')"></i></label>
                                             <div class="input-group mb-3">
                                                 <input type="number" class="form-control" id="DASize" min="1" value="1"
-                                                    max="30" aria-describedby="basic-addon2">
-                                                <span class="input-group-text" id="basic-addon2">MB</span>
+                                                    aria-describedby="DASizeLabel">
+                                                <span class="input-group-text" id="DASizeLabel">MB</span>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -350,6 +365,7 @@
                                         <thead>
                                             <tr>
                                                 <th scope="col">Engine</th>
+                                                <th scope="col">Workitem Specs</th>
                                                 <th scope="col">Unit cost</th>
                                                 <th scope="col">Frequency</th>
                                                 <th scope="col">Cost</th>

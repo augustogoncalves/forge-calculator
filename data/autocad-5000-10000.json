@@ -1,0 +1,5 @@
+{"preview":false,"result":{"size":"5000-6000","min(time)":"2.8840","median(time)":"28.8533","avg(time)":"28.91885446009391","perc95(time)":"53.2353","max(time)":"77.9470"}}
+{"preview":false,"result":{"size":"6000-7000","min(time)":"4.5670","median(time)":"16.6188","avg(time)":"19.3657320441989","perc95(time)":"48.6429","max(time)":"89.4910"}}
+{"preview":false,"result":{"size":"7000-8000","min(time)":"5.9540","median(time)":"41.4411","avg(time)":"38.78057730263159","perc95(time)":"52.0027","max(time)":"100.5630"}}
+{"preview":false,"result":{"size":"8000-9000","min(time)":"4.8260","median(time)":"22.0052","avg(time)":"26.50565005931197","perc95(time)":"48.7748","max(time)":"64.8530"}}
+{"preview":false,"lastrow":true,"result":{"size":"9000-10000","min(time)":"4.9320","median(time)":"41.1250","avg(time)":"34.186112149532725","perc95(time)":"56.6521","max(time)":"75.9340"}}

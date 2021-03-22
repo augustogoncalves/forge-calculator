@@ -1,0 +1,10 @@
+{"preview":false,"result":{"size":"0-200","min(time)":"3.5980","median(time)":"5.5219","avg(time)":"10.180992800000002","perc95(time)":"35.3652","max(time)":"346.5630"}}
+{"preview":false,"result":{"size":"200-400","min(time)":"4.8510","median(time)":"5.5065","avg(time)":"10.52571996027805","perc95(time)":"26.6552","max(time)":"517.7180"}}
+{"preview":false,"result":{"size":"400-600","min(time)":"4.6160","median(time)":"9.7527","avg(time)":"11.929526260504199","perc95(time)":"18.3075","max(time)":"111.3310"}}
+{"preview":false,"result":{"size":"600-800","min(time)":"4.4920","median(time)":"11.2185","avg(time)":"12.54315435356201","perc95(time)":"19.2152","max(time)":"77.2460"}}
+{"preview":false,"result":{"size":"800-1000","min(time)":"7.3030","median(time)":"11.0094","avg(time)":"16.761203299941076","perc95(time)":"41.9389","max(time)":"763.8330"}}
+{"preview":false,"result":{"size":"1000-1200","min(time)":"5.6780","median(time)":"12.2906","avg(time)":"14.10822076502732","perc95(time)":"18.2316","max(time)":"101.0610"}}
+{"preview":false,"result":{"size":"1200-1400","min(time)":"3.4920","median(time)":"13.5668","avg(time)":"14.684211779448622","perc95(time)":"19.3144","max(time)":"84.0480"}}
+{"preview":false,"result":{"size":"1400-1600","min(time)":"3.6750","median(time)":"13.2215","avg(time)":"15.689408333333335","perc95(time)":"31.7488","max(time)":"86.6210"}}
+{"preview":false,"result":{"size":"1600-1800","min(time)":"5.8500","median(time)":"14.2098","avg(time)":"16.186463768115935","perc95(time)":"30.6474","max(time)":"75.0660"}}
+{"preview":false,"lastrow":true,"result":{"size":"1800-2000","min(time)":"5.7780","median(time)":"15.7125","avg(time)":"17.768869047619052","perc95(time)":"30.3610","max(time)":"78.5250"}}

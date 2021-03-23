@@ -53,7 +53,7 @@
                 }
                 let totalCost = cost * time / 60 / 60 * frequency;
                 let rowId = 'costRow' + Date.now();
-                $('#DATable tr:last').after('<tr id=' + rowId + '><td>' + engine + '</td><td>' + size + sizeLabel + ' - ' + complexityLabel + '</td><td>' + time + 's * ' + cost + '/hour = ' + (time / 60 / 60 * cost).toFixed(3) + '</td><td>' + frequency + '</td><td>' + totalCost.toFixed(3) + '</td><td><i class="far fa-trash-alt" onclick="deleteRow(\'' + rowId + '\', ' + totalCost + ')"></i></td></tr>');
+                $('#DATable tr:last').after('<tr id=' + rowId + '><td>' + engine + '</td><td>' + size + sizeLabel + ' | ' + complexityLabel + '</td><td>' + time + 's * ' + cost + '/hour = ' + (time / 60 / 60 * cost).toFixed(3) + '</td><td>' + frequency + '</td><td>' + totalCost.toFixed(3) + '</td><td><i class="far fa-trash-alt" onclick="deleteRow(\'' + rowId + '\', ' + totalCost + ')"></i></td></tr>');
                 updateTotal(totalCost);
                 $('#DATable').show();
             })
@@ -165,11 +165,11 @@
                     break;
                 case 'DASize':
                     title.html('Input file size');
-                    body.html('Larger files usually takes longer to open and execute automations. This is the total input size (in case of multiple files).<br/><br/>Based on thousands of other Design Automation executions, it will cross reference the size and complexity.');
+                    body.html('Larger files usually takes longer to open and execute automations. This is the total input size (in case of multiple files).<br/><br/>Size range and intervals per engine:<ul><li><strong>AutoCAD</strong> sizes are in KB, intervals of 100KB up to 5MB, then 1MB up to 10MB.</li><li><strong>Revit</strong> sizes are in MB, intervals of 10MB up to 100MB, then 20MB up to 200MB, then 100MB up to 1GB, then 500MB up to 2.5GB</li><li><strong>Inventor</strong> sizes are in KB, intervals of 200Kb up to 2MB, then 1MB up to 6MB, then 2MB up to 20MB, then 10MB interval up to 100MB.</li></ul>');
                     break;
                 case 'DAComplexity':
                     title.html('Script/code complexity');
-                    body.html('Based on thousands of other Design Automation executions, the suggested complexities are typical values observed on Design Automation services. <br/><br/>These are statistical values for your reference: <ul><li><strong>Super simple</strong>: mininum.</li><li><strong>Simple</strong>: median (50% of all excutions).</li><li><strong>Average</strong>: average time.</li><li><strong>Complex</strong>: percentile 95 (95% of all executions).</li><li><strong>Super complex</strong>: maximum.</li></ul>If not sure, conside selecting <strong>Simple (median)</strong>, which is true for 50% of all Design Automation executions.<br/><br/>The complexity will be cross referenced with file size.');
+                    body.html('Based on thousands of other Design Automation executions, the suggested complexities are typical values observed on Design Automation services. <br/><br/>These are statistical values for your reference: <ul><li><strong>Super simple</strong>: mininum.</li><li><strong>Simple</strong>: median (50% of all excutions).</li><li><strong>Average</strong>: average time.</li><li><strong>Complex</strong>: percentile 95 (95% of all executions).</li><li><strong>Super complex</strong>: maximum.</li></ul>If not sure, conside selecting <strong>Simple (median)</strong>, which is true for 50% of all Design Automation executions.');
                     break;
                 case 'DAFrequency':
                     title.html('How often is this automation executed?');
@@ -365,7 +365,7 @@
                                         <thead>
                                             <tr>
                                                 <th scope="col">Engine</th>
-                                                <th scope="col">Workitem Specs</th>
+                                                <th scope="col">Execution</th>
                                                 <th scope="col">Unit cost</th>
                                                 <th scope="col">Frequency</th>
                                                 <th scope="col">Cost</th>

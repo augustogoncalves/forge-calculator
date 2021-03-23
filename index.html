@@ -29,11 +29,12 @@
                 let type = $('#MDFileFormat').val();
                 let number = $('#MDCount').val();
                 let frequency = $('#MDFrequency').val();
-                let unitCost = (where == 'BIM360' ? 0 : 1) * ((new RegExp("RVT|NWC|NWD")).test(type) ? 1.5 : 0.2)
+                let unitCost = ((new RegExp("BIM360|Fusion")).test(where) ? 0 : 1) * ((new RegExp("RVT|NWC|NWD")).test(type) ? 1.5 : 0.2)
                 let totalCost = unitCost * number * frequency;
                 let rowId = 'costRow' + Date.now();
-                let pdf = (type == 'PDF' ? '<i class="fas fa-info-circle" style="cursor:help" onclick="showHelp(\'PDF\')"></i>' : '');
-                $('#MDTable tr:last').after('<tr id=' + rowId + '><td>' + where + '</td><td>' + type + '</td><td>' + number + ' x ' + frequency + ' = ' + number * frequency + '</td><td>' + number * frequency + ' x ' + unitCost + ' = ' + totalCost.toFixed(1) + ' ' + pdf + '</td><td><i class="far fa-trash-alt" onclick="deleteRow(\'' + rowId + '\', ' + totalCost + ')"></i></td></tr>');
+                let pdf = ((type == 'PDF' || type == 'DWF') ? '<i class="fas fa-info-circle" style="cursor:help" onclick="showHelp(\'PDF\')"></i>' : '');
+                let fusionPre = (where == 'Fusion' ? ' <i class="fas fa-info-circle" style="cursor:help" onclick="showHelp(\'MDSource\')"></i>' : '');
+                $('#MDTable tr:last').after('<tr id=' + rowId + '><td>' + where + fusionPre + '</td><td>' + type + '</td><td>' + number + ' x ' + frequency + ' = ' + number * frequency + '</td><td>' + number * frequency + ' x ' + unitCost + ' = ' + totalCost.toFixed(1) + ' ' + pdf + '</td><td><i class="far fa-trash-alt" onclick="deleteRow(\'' + rowId + '\', ' + totalCost + ')"></i></td></tr>');
                 updateTotal(totalCost);
                 $('#MDTable').show();
             })
@@ -148,12 +149,12 @@
             var body = $('#infoBody');
             switch (id) {
                 case 'PDF':
-                    title.html('About Viewer PDF support');
-                    body.html('PDF can be visualized using the Autodesk.PDF extension without translation, but requires the file to be hosted and served directly. <a href="https://forge.autodesk.com/en/docs/viewer/v7/reference/Extensions/PDFExtension/" target="_blank">Learn more</a>.')
+                    title.html('About DWF and PDF support');
+                    body.html('DWF has native support. PDF can be visualized using the <a href="https://forge.autodesk.com/en/docs/viewer/v7/reference/Extensions/PDFExtension/" target="_blank">Autodesk.PDF extension</a>.');
                     break;
                 case 'MDSource':
                     title.html('Where is the file?');
-                    body.html('Autodesk products, like BIM 360 Document Manager (Docs), automatically prepare files for viewing. <br/><br/>If the file is stored somewhere else, like OneDrive or Dropbox, it needs to be transfered to Forge OSS and then prepared for viewing.');
+                    body.html('Autodesk products, like <strong>BIM 360 Document Manager</strong> (Docs), automatically prepare models for viewing. <strong>Fusion 360</strong> will prepare models for viewing only when a user first open on the interface.<br/><br/>If the file is stored somewhere else, like OneDrive or Dropbox, it needs to be transfered to Forge OSS and then prepared for viewing.');
                     break;
                 case 'MDType':
                     title.html('Supported file formats');
@@ -235,7 +236,7 @@
                                                 onclick="showHelp('MDSource')"></i></label>
                                         <select class="form-select" aria-label="Default select example" id="MDSource">
                                             <option value="BIM360">BIM360 Docs</option>
-                                            <option value="Fusion">Fusion 360</option>
+                                            <option value="Fusion">Fusion 360 (*)</option>
                                             <option value="OneDrive">OneDrive</option>
                                             <option value="Dropbox">Dropbox</option>
                                             <option value="Local">Local drive</option>

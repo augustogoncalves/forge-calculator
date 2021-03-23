@@ -136,7 +136,8 @@
 
         function updateTotal(add) {
             totalCost += add;
-            $('#TotalCost').html(Math.abs(totalCost).toFixed(3) + ' Cloud Credits');
+            // round up to 2 decimal places
+            $('#TotalCost').html((Math.ceil(Math.abs(totalCost) * 10) / 10).toFixed(1) + ' Cloud Credits');
         }
 
         function deleteRow(rowId, cost) {
@@ -190,7 +191,7 @@
                     break;
                 case 'More':
                     title.html('Learn more');
-                    body.html('Additional learning material: <br/><br/><a href="https://forge.autodesk.com/blog/forge-pricing-explained-1-how-access-forge" target="_blank">How to Access Forge</a><br/><a href="https://forge.autodesk.com/blog/forge-pricing-explained-2-forge-and-cloud-credits" target="_blank">Cloud Credits explained</a><br/><a href="https://forge.autodesk.com/blog/forge-pricing-explained-3-what-does-each-forge-api-cost" target="_blank">What does each Forge API cost?</a><br/><a href="https://forge.autodesk.com/blog/estimate-design-automation-costs" target="_blank">Design Automation cost</a>');
+                    body.html('Additional learning material: <br/><br/><a href="https://forge.autodesk.com/blog/forge-pricing-explained-1-how-access-forge" target="_blank">How to Access Forge</a><br/><a href="https://forge.autodesk.com/blog/forge-pricing-explained-2-forge-and-cloud-credits" target="_blank">Cloud Credits explained</a><br/><a href="https://forge.autodesk.com/blog/forge-pricing-explained-3-what-does-each-forge-api-cost" target="_blank">What does each Forge API cost?</a><br/><a href="https://forge.autodesk.com/blog/estimate-design-automation-costs" target="_blank">Design Automation cost</a><br/><a href="https://www.youtube.com/watch?v=SnhhXbiXc6g" target="_blank">Maximize your profitability with Forge</a>');
                     break;
                 default:
                     break;
@@ -329,7 +330,7 @@
                                                     class="fas fa-info-circle" style="cursor:help"
                                                     onclick="showHelp('DASize')"></i></label>
                                             <div class="input-group mb-3">
-                                                <input type="number" class="form-control" id="DASize" min="1" value="1"
+                                                <input type="number" class="form-control" id="DASize" min="1" value="100"
                                                     aria-describedby="DASizeLabel">
                                                 <span class="input-group-text" id="DASizeLabel">MB</span>
                                             </div>
@@ -341,7 +342,7 @@
                                             <select class="form-select" aria-label="Default select example"
                                                 id="DAComplexity">
                                                 <option value="min">Super simple</option>
-                                                <option value="median">Simple</option>
+                                                <option value="median" selected>Simple</option>
                                                 <option value="avg">Average</option>
                                                 <option value="perc95">Complex</option>
                                                 <option value="max">Super complex</option>
@@ -353,7 +354,7 @@
                                                     onclick="showHelp('DAFrequency')"></i></label>
                                             <div class="input-group mb-3">
                                                 <input type="number" class="form-control" id="DAFrequency" min="1"
-                                                    value="1" aria-describedby="basic-addon2">
+                                                    value="30" aria-describedby="basic-addon2">
                                                 <span class="input-group-text" id="basic-addon2">per month</span>
                                             </div>
                                         </div>

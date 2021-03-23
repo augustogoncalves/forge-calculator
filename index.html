@@ -27,13 +27,13 @@
             $('#MDAdd').click(() => {
                 let where = $('#MDSource').val();
                 let type = $('#MDFileFormat').val();
-                let number = $('#MDCount').val();
-                let frequency = $('#MDFrequency').val();
+                let number = Math.round($('#MDCount').val());
+                let frequency = Math.round($('#MDFrequency').val());
                 let unitCost = ((new RegExp("BIM360|Fusion")).test(where) ? 0 : 1) * ((new RegExp("RVT|NWC|NWD")).test(type) ? 1.5 : 0.2)
                 let totalCost = unitCost * number * frequency;
                 let rowId = 'costRow' + Date.now();
-                let pdf = ((type == 'PDF' || type == 'DWF') ? '<i class="fas fa-info-circle" style="cursor:help" onclick="showHelp(\'PDF\')"></i>' : '');
-                let fusionPre = (where == 'Fusion' ? ' <i class="fas fa-info-circle" style="cursor:help" onclick="showHelp(\'MDSource\')"></i>' : '');
+                let pdf = ((type == 'PDF' || type == 'DWF') ? '<i class="fas fa-info-circle" style="cursor:help" onclick="showHelp(\'Native\')"></i>' : '');
+                let fusionPre = ((new RegExp("BIM360|Fusion")).test(where) ? ' <i class="fas fa-info-circle" style="cursor:help" onclick="showHelp(\'MDSource\')"></i>' : '');
                 $('#MDTable tr:last').after('<tr id=' + rowId + '><td>' + where + fusionPre + '</td><td>' + type + '</td><td>' + number + ' x ' + frequency + ' = ' + number * frequency + '</td><td>' + number * frequency + ' x ' + unitCost + ' = ' + totalCost.toFixed(1) + ' ' + pdf + '</td><td><i class="far fa-trash-alt" onclick="deleteRow(\'' + rowId + '\', ' + totalCost + ')"></i></td></tr>');
                 updateTotal(totalCost);
                 $('#MDTable').show();
@@ -41,11 +41,11 @@
 
             $('#DAAdd').click(() => {
                 let engine = $('#DAEngine').val();
-                let size = Number.parseInt($('#DASize').val());
+                let size = Math.round($('#DASize').val());
                 let sizeLabel = $('#DASizeLabel').text();
                 let complexity = $('#DAComplexity').val();
                 let complexityLabel = $('#DAComplexity option:selected').text();
-                let frequency = $('#DAFrequency').val();
+                let frequency = Math.round($('#DAFrequency').val());
                 let cost = (engine == 'AutoCAD' ? 4 : 6);
                 let time = getTime(engine, size, complexity);
                 if (time == 0) {
@@ -54,35 +54,42 @@
                 }
                 let totalCost = cost * time / 60 / 60 * frequency;
                 let rowId = 'costRow' + Date.now();
-                $('#DATable tr:last').after('<tr id=' + rowId + '><td>' + engine + '</td><td>' + size + sizeLabel + ' | ' + complexityLabel + '</td><td>' + time + 's * ' + cost + '/hour = ' + (time / 60 / 60 * cost).toFixed(3) + '</td><td>' + frequency + '</td><td>' + totalCost.toFixed(3) + '</td><td><i class="far fa-trash-alt" onclick="deleteRow(\'' + rowId + '\', ' + totalCost + ')"></i></td></tr>');
+                $('#DATable tr:last').after('<tr id=' + rowId + '><td>' + engine + '</td><td>' + size + sizeLabel + ' | ' + complexityLabel + '</td><td>' + time + 's * ' + cost + '/hour = ' + math2decimal(time / 60 / 60 * cost) + '</td><td>' + frequency + '</td><td>' + math2decimal(totalCost) + '</td><td><i class="far fa-trash-alt" onclick="deleteRow(\'' + rowId + '\', ' + totalCost + ')"></i></td></tr>');
                 updateTotal(totalCost);
                 $('#DATable').show();
             })
 
             $('#RCAdd').click(() => {
-                let size = Number.parseInt($('#RCSize').val());
-                let quantity = Number.parseInt($('#RCQuantity').val());
-                let frequency = Number.parseInt($('#RCFrequency').val());
+                let size = $('#RCSize').val();
+                let quantity = Math.round($('#RCQuantity').val());
+                let frequency = Math.round($('#RCFrequency').val());
                 let cost = (size * quantity) / 1024 * 3.5;
                 let totalCost = cost * frequency;
                 let rowId = 'costRow' + Date.now();
-                $('#RCTable tr:last').after('<tr id=' + rowId + '><td>' + quantity + ' x ' + size + ' = ' + (quantity * size / 1024).toFixed(2) + '</td><td>' + (quantity * size / 1024).toFixed(2) + ' * ' + frequency + ' = ' + ((quantity * size / 1024) * frequency).toFixed(2) + '</td><td>' + ((quantity * size / 1024) * frequency).toFixed(2) + ' * 3.5 = ' + (cost * frequency).toFixed(2) + '</td><td><i class="far fa-trash-alt" onclick="deleteRow(\'' + rowId + '\', ' + totalCost + ')"></i></td></tr>');
+                $('#RCTable tr:last').after('<tr id=' + rowId + '><td>' + quantity + ' x ' + size + ' = ' + math2decimal(quantity * size / 1024) + '</td><td>' + math2decimal(quantity * size / 1024) + ' * 3.5 = ' + math2decimal((quantity * size / 1024) * 3.5) + '</td><td>' + frequency + '</td><td>' + math2decimal(cost * frequency) + '</td><td><i class="far fa-trash-alt" onclick="deleteRow(\'' + rowId + '\', ' + totalCost + ')"></i></td></tr>');
                 updateTotal(totalCost);
                 $('#RCTable').show();
             })
 
-                * $("#DAEngine").change(function () {
-                    switch (this.value) {
-                        case 'Revit':
-                            $('#DASizeLabel').text('MB');
-                            $('#DASize').attr('step', 10);
-                            break;
-                        case 'AutoCAD': case 'Inventor':
-                            $('#DASizeLabel').text('KB');
-                            $('#DASize').attr('step', 100);
-                            break;
-                    }
-                }).change();
+            $("#DAEngine").change(function () {
+                switch (this.value) {
+                    case 'Revit':
+                        $('#DASizeLabel').text('MB');
+                        $('#DASize').attr('step', 10);
+                        $('#DASize').val(10);
+                        break;
+                    case 'AutoCAD':
+                        $('#DASizeLabel').text('KB');
+                        $('#DASize').attr('step', 100);
+                        $('#DASize').val(100);
+                        break;
+                    case 'Inventor':
+                        $('#DASizeLabel').text('KB');
+                        $('#DASize').attr('step', 200);
+                        $('#DASize').val(200);
+                        break;
+                }
+            }).change();
 
             $('#MDTable').hide();
             $('#DATable').hide();
@@ -96,6 +103,10 @@
             AutoCAD: [],
             Revit: [],
             Inventor: []
+        }
+
+        function math2decimal(number) {
+            return (Math.ceil(number * 100) / 100).toFixed(2)
         }
 
         async function getStats() {
@@ -149,13 +160,13 @@
             var title = $('#infoTitle');
             var body = $('#infoBody');
             switch (id) {
-                case 'PDF':
+                case 'Native':
                     title.html('About DWF and PDF support');
-                    body.html('DWF has native support. PDF can be visualized using the <a href="https://forge.autodesk.com/en/docs/viewer/v7/reference/Extensions/PDFExtension/" target="_blank">Autodesk.PDF extension</a>.');
+                    body.html('DWF has native support and PDF can be visualized using the <a href="https://forge.autodesk.com/en/docs/viewer/v7/reference/Extensions/PDFExtension/" target="_blank">Autodesk.PDF extension</a>. These file formats can be viewed without translation.');
                     break;
                 case 'MDSource':
                     title.html('Where is the file?');
-                    body.html('Autodesk products, like <strong>BIM 360 Document Manager</strong> (Docs), automatically prepare models for viewing. <strong>Fusion 360</strong> will prepare models for viewing only when a user first open on the interface.<br/><br/>If the file is stored somewhere else, like OneDrive or Dropbox, it needs to be transfered to Forge OSS and then prepared for viewing.');
+                    body.html('Autodesk products, like <strong>BIM 360 Document Manager</strong> (Docs), automatically prepare models for viewing. <strong>Fusion 360</strong> will prepare models for viewing only when a user first open on the interface.<br/><br/>If the file is stored somewhere else, it needs to be transferred to Forge OSS and then prepared for viewing.');
                     break;
                 case 'MDType':
                     title.html('Supported file formats');
@@ -165,17 +176,21 @@
                     title.html('How often is the model updated?');
                     body.html('Each time the model is updated it needs to be prepared for viewing, in order to reflect the changes.');
                     break;
+                case 'DAEngine':
+                    title.html('Engines available');
+                    body.html('For Civil 3D executions, please select AutoCAD engine.<br/><br/>At this point we cannot offer estimates for 3dsMax, please <a href="https://forge.autodesk.com/en/support/get-help">contact support</a> for assistance.');
+                    break;
                 case 'DASize':
                     title.html('Input file size');
                     body.html('Larger files usually takes longer to open and execute automations. This is the total input size (in case of multiple files).<br/><br/>Size range and intervals per engine:<ul><li><strong>AutoCAD</strong> sizes are in KB, intervals of 100KB up to 5MB, then 1MB up to 10MB.</li><li><strong>Revit</strong> sizes are in MB, intervals of 10MB up to 100MB, then 20MB up to 200MB, then 100MB up to 1GB, then 500MB up to 2.5GB</li><li><strong>Inventor</strong> sizes are in KB, intervals of 200Kb up to 2MB, then 1MB up to 6MB, then 2MB up to 20MB, then 10MB interval up to 100MB.</li></ul>');
                     break;
                 case 'DAComplexity':
                     title.html('Script/code complexity');
-                    body.html('Based on thousands of other Design Automation executions, the suggested complexities are typical values observed on Design Automation services. <br/><br/>These are statistical values for your reference: <ul><li><strong>Super simple</strong>: mininum.</li><li><strong>Simple</strong>: median (50% of all excutions).</li><li><strong>Average</strong>: average time.</li><li><strong>Complex</strong>: percentile 95 (95% of all executions).</li><li><strong>Super complex</strong>: maximum.</li></ul>If not sure, conside selecting <strong>Simple (median)</strong>, which is true for 50% of all Design Automation executions.');
+                    body.html('Based on thousands of other Design Automation executions, the suggested complexities are typical values observed on Design Automation services. <br/><br/>These are statistical values for your reference: <ul><li><strong>Super simple</strong>: minimum.</li><li><strong>Simple</strong>: median (50% of all executions).</li><li><strong>Average</strong>: average time.</li><li><strong>Complex</strong>: percentile 95 (95% of all executions).</li><li><strong>Super complex</strong>: maximum.</li></ul>If not sure, consider selecting <strong>Simple (median)</strong>, which is true for 50% of all Design Automation executions.');
                     break;
                 case 'DAFrequency':
                     title.html('How often is this automation executed?');
-                    body.html('Consider how many models needs to be executed against this automation. <br/><br/>For instace: your automation checks every new Revit version uploaded, and your team updates models 15 days per day (x 30 days equals 450 executions per month).');
+                    body.html('Consider how many models needs to be executed against this automation. <br/><br/>For instance: your automation checks every new Revit version uploaded, and your team updates models 15 days per day (x 30 days equals 450 executions per month).');
                     break;
                 case 'RCFrequency':
                     title.html('How often are pictures updated?');
@@ -205,13 +220,20 @@
     </script>
     <div class="container-sm">
         <div class="row">
-            <div class="col" style="margin: 50px;">
-                <center><a href="http://developer.autodesk.com" target="_blank">
-                        <img alt="Autodesk Forge" src="//developer.static.autodesk.com/images/logo_forge-2-line.png"
-                            height="60"></a>
+            <div class="col-12" style="padding-top: 50px;">
+                <center><a href="http://forge.autodesk.com" target="_blank">
+                        <img alt="Autodesk Forge" src="images/autodesk-forge-logo-full-color-black-stacked.png"
+                            height="120"></a>
                     <br /><br />
-                    <h3>Cloud Credit Estimation</h3>
+                    <h3>Forge Cloud Credit Calculator</h3>
                 </center>
+            </div>
+            <div class="col-12" style="padding: 20px;">
+                <span>This is a estimation tool that helps you figure out how many Cloud Credits you need a month
+                    for your Forge applications. A Cloud Credit is a virtual currency representing a unit of
+                    measurement required to perform tasks. Below are some of the most common tasks. For help
+                    estimating other tasks, please reach out to <a
+                        href="https://forge.autodesk.com/en/support/get-help">Forge Support</a>.</span>
             </div>
         </div>
         <div class="row">
@@ -237,9 +259,11 @@
                                                 onclick="showHelp('MDSource')"></i></label>
                                         <select class="form-select" aria-label="Default select example" id="MDSource">
                                             <option value="BIM360">BIM 360 Docs</option>
-                                            <option value="Fusion">Fusion 360 (*)</option>
+                                            <option value="Fusion">Fusion 360</option>
                                             <option value="OneDrive">OneDrive</option>
                                             <option value="Dropbox">Dropbox</option>
+                                            <option value="Box">Box</option>
+                                            <option value="GoogleDrive">Google Drive</option>
                                             <option value="Local">Local drive</option>
                                             <option value="Other">Other</option>
                                         </select>
@@ -254,19 +278,20 @@
                                             <option value="NWD/NWC">Navisworks</option>
                                             <option value="DWG/DXF">AutoCAD</option>
                                             <option value="IAM/IPT">Inventor</option>
+                                            <option value="F2D/F3D">Fusion</option>
                                             <option value="SLDASM/SLDPRT">Solidworks</option>
-                                            <option value="DWF/DWFX">DWF/DWFx</option>
+                                            <option value="DWF">DWF/DWFx</option>
                                             <option value="PDF">PDF</option>
                                             <option value="STEP/OBJ">STEP/OBJ</option>
                                             <option value="IFC">IFC</option>
-                                            <option value="Other">Other</option>
+                                            <option value="Other">Other supported formats</option>
                                         </select>
                                     </div>
                                     <div class="col-3">
                                         <div class="mb-3">
                                             <label for="exampleFormControlInput1" class="form-label">How many
                                                 models</label>
-                                            <input type="number" class="form-control" id="MDCount" min="1" value="1">
+                                            <input type="number" class="form-control" id="MDCount" min="1" value="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                                         </div>
                                     </div>
                                     <div class="col-3">
@@ -274,8 +299,8 @@
                                             updated <i class="fas fa-info-circle" style="cursor:help"
                                                 onclick="showHelp('MDFrequency')"></i></label>
                                         <div class="input-group mb-3">
-                                            <input type="number" class="form-control" id="MDFrequency" min="1" value="1"
-                                                aria-describedby="basic-addon2">
+                                            <input type="number" class="form-control" id="MDFrequency" min="1" value="30"
+                                                aria-describedby="basic-addon2" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                                             <span class="input-group-text" id="basic-addon2">per month</span>
                                         </div>
                                     </div>
@@ -304,7 +329,7 @@
                         <h2 class="accordion-header" id="headingTwo">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                I need to create or modify files
+                                I need to create or modify models
                             </button>
                         </h2>
                         <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
@@ -316,13 +341,15 @@
                                     <hr>
                                     <div class="row">
                                         <div class="col-2">
-                                            <label for="exampleDataList" class="form-label">Engine </label>
+                                            <label for="exampleDataList" class="form-label">Engine <i
+                                                    class="fas fa-info-circle" style="cursor:help"
+                                                    onclick="showHelp('DAEngine')"></i></label>
                                             <select class="form-select" aria-label="Default select example"
                                                 id="DAEngine">
                                                 <option value="AutoCAD">AutoCAD</option>
                                                 <option value="Revit">Revit</option>
                                                 <option value="Inventor">Inventor</option>
-                                                <option value="Max" disabled>3ds Max</option>
+                                                <!--<option value="Max" disabled>3ds Max</option>-->
                                             </select>
                                         </div>
                                         <div class="col-2">
@@ -330,8 +357,8 @@
                                                     class="fas fa-info-circle" style="cursor:help"
                                                     onclick="showHelp('DASize')"></i></label>
                                             <div class="input-group mb-3">
-                                                <input type="number" class="form-control" id="DASize" min="1" value="100"
-                                                    aria-describedby="DASizeLabel">
+                                                <input type="number" class="form-control" id="DASize" min="0"
+                                                    value="100" aria-describedby="DASizeLabel" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                                                 <span class="input-group-text" id="DASizeLabel">MB</span>
                                             </div>
                                         </div>
@@ -354,7 +381,7 @@
                                                     onclick="showHelp('DAFrequency')"></i></label>
                                             <div class="input-group mb-3">
                                                 <input type="number" class="form-control" id="DAFrequency" min="1"
-                                                    value="30" aria-describedby="basic-addon2">
+                                                    value="30" aria-describedby="basic-addon2" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                                                 <span class="input-group-text" id="basic-addon2">per month</span>
                                             </div>
                                         </div>
@@ -400,7 +427,7 @@
                                             pictures?</label>
                                         <div class="input-group mb-3">
                                             <input type="number" class="form-control" id="RCQuantity" min="3" value="10"
-                                                max="1000" max="30" aria-describedby="basic-addon2">
+                                                max="1000" max="30" aria-describedby="basic-addon2" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                                             <span class="input-group-text" id="basic-addon2">pictures</span>
                                         </div>
                                     </div>
@@ -419,7 +446,7 @@
                                                 onclick="showHelp('RCFrequency')"></i></label>
                                         <div class="input-group mb-3">
                                             <input type="number" class="form-control" id="RCFrequency" min="1" value="1"
-                                                aria-describedby="basic-addon2">
+                                                aria-describedby="basic-addon2" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                                             <span class="input-group-text" id="basic-addon2">per month</span>
                                         </div>
                                     </div>
@@ -435,6 +462,7 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">Pictures (Gigapixel)</th>
+                                            <th scope="col">Unit cost</th>
                                             <th scope="col">Frequency</th>
                                             <th scope="col">Cost</th>
                                             <th scope="col"></th>
@@ -451,7 +479,7 @@
             </div>
             <div class="col-2">
                 <center>
-                    <h4>Total per month<br /><span class="badge bg-secondary" id="TotalCost">00 Cloud Credits</span>
+                    <h4>Total per month<br /><span class="badge bg-secondary" id="TotalCost">0 Cloud Credits</span>
                         </h1> <br /></br> <span onclick="showHelp('Disclaimer')" style="cursor:pointer;"><a
                                 href="#">Disclaimer</a></span><br /> <span><a href="https://forge.autodesk.com/pricing"
                                 target="_blank">Pricing</a><br /></span> <span onclick="showHelp('More')"

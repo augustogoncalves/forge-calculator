@@ -162,14 +162,14 @@
             switch (id) {
                 case 'Native':
                     title.html('About DWF and PDF support');
-                    body.html('DWF has native support and PDF can be visualized using the <a href="https://forge.autodesk.com/en/docs/viewer/v7/reference/Extensions/PDFExtension/" target="_blank">Autodesk.PDF extension</a>. These file formats can be viewed without translation.');
+                    body.html('DWF has native support and PDF can be visualized using the <a href="https://forge.autodesk.com/en/docs/viewer/v7/reference/Extensions/PDFExtension/" target="_blank">Autodesk.PDF extension</a>. These model formats can be viewed without translation.');
                     break;
                 case 'MDSource':
-                    title.html('Where is the file?');
-                    body.html('Autodesk products, like <strong>BIM 360 Document Manager</strong> (Docs), automatically prepare models for viewing. <strong>Fusion 360</strong> will prepare models for viewing only when a user first open on the interface.<br/><br/>If the file is stored somewhere else, it needs to be transferred to Forge OSS and then prepared for viewing.');
+                    title.html('Where is the model?');
+                    body.html('Autodesk products, like <strong>BIM 360 Document Manager</strong> (Docs), automatically prepare models for viewing. <strong>Fusion 360</strong> will prepare models for viewing only when a user first open on the interface.<br/><br/>If the model is stored somewhere else, it needs to be transferred to Forge OSS and then prepared for viewing.');
                     break;
                 case 'MDType':
-                    title.html('Supported file formats');
+                    title.html('Supported model formats');
                     body.html('Please refer to a complete <a href="https://forge.autodesk.com/en/docs/model-derivative/v2/developers_guide/supported-translations/" target="_blank">list of support formats</a>.')
                     break;
                 case 'MDFrequency':
@@ -181,8 +181,8 @@
                     body.html('For Civil 3D executions, please select AutoCAD engine.<br/><br/>At this point we cannot offer estimates for 3dsMax, please <a href="https://forge.autodesk.com/en/support/get-help">contact support</a> for assistance.');
                     break;
                 case 'DASize':
-                    title.html('Input file size');
-                    body.html('Larger files usually takes longer to open and execute automations. This is the total input size (in case of multiple files).<br/><br/>Size range and intervals per engine:<ul><li><strong>AutoCAD</strong> sizes are in KB, intervals of 100KB up to 5MB, then 1MB up to 10MB.</li><li><strong>Revit</strong> sizes are in MB, intervals of 10MB up to 100MB, then 20MB up to 200MB, then 100MB up to 1GB, then 500MB up to 2.5GB</li><li><strong>Inventor</strong> sizes are in KB, intervals of 200Kb up to 2MB, then 1MB up to 6MB, then 2MB up to 20MB, then 10MB interval up to 100MB.</li></ul>');
+                    title.html('Input model size');
+                    body.html('Larger models usually takes longer to open and execute automations. This is the total input size (in case of multiple models).<br/><br/>Size range and intervals per engine:<ul><li><strong>AutoCAD</strong> sizes are in KB, intervals of 100KB up to 5MB, then 1MB up to 10MB.</li><li><strong>Revit</strong> sizes are in MB, intervals of 10MB up to 100MB, then 20MB up to 200MB, then 100MB up to 1GB, then 500MB up to 2.5GB</li><li><strong>Inventor</strong> sizes are in KB, intervals of 200Kb up to 2MB, then 1MB up to 6MB, then 2MB up to 20MB, then 10MB interval up to 100MB.</li></ul>');
                     break;
                 case 'DAComplexity':
                     title.html('Script/code complexity');
@@ -190,7 +190,7 @@
                     break;
                 case 'DAFrequency':
                     title.html('How often is this automation executed?');
-                    body.html('Consider how many models needs to be executed against this automation. <br/><br/>For instance: your automation checks every new Revit version uploaded, and your team updates models 15 days per day (x 30 days equals 450 executions per month).');
+                    body.html('Consider how many models needs to be executed against this automation. <br/><br/>For instance: your automation checks every new Revit version uploaded, and your team update models 15 days per day (x 30 days, equals 450 executions per month).');
                     break;
                 case 'RCFrequency':
                     title.html('How often are pictures updated?');
@@ -202,7 +202,7 @@
                     break;
                 case 'DASizeNotAvailable':
                     title.html('Information not available');
-                    body.html('Sorry we don\'t have enough data to estimate for that file size');
+                    body.html('Sorry we don\'t have enough data to estimate for that model size');
                     break;
                 case 'More':
                     title.html('Learn more');
@@ -253,7 +253,7 @@
                         <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
                             data-bs-parent="#accordionExample">
                             <div class="accordion-body">
-                                Please specify where the files are hosted, type, how many files and how often files
+                                Please specify where the models are hosted, type, how many models and how often models
                                 are updated (per month).
                                 <hr>
                                 <div class="row">
@@ -273,7 +273,7 @@
                                         </select>
                                     </div>
                                     <div class="col-2">
-                                        <label for="exampleDataList" class="form-label">File type <i
+                                        <label for="exampleDataList" class="form-label">Model type <i
                                                 class="fas fa-info-circle" style="cursor:help"
                                                 onclick="showHelp('MDType')"></i></label>
                                         <select class="form-select" aria-label="Default select example"
@@ -342,7 +342,7 @@
                             data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <div class="accordion-body">
-                                    Please select the engine, total file size, how complex is the script/code and how
+                                    Please select the engine, total model size, how complex is the script/code and how
                                     ofter is executed (per month).
                                     <hr>
                                     <div class="row">
@@ -359,7 +359,7 @@
                                             </select>
                                         </div>
                                         <div class="col-2">
-                                            <label for="exampleFormControlInput1" class="form-label">File size <i
+                                            <label for="exampleFormControlInput1" class="form-label">Model size <i
                                                     class="fas fa-info-circle" style="cursor:help"
                                                     onclick="showHelp('DASize')"></i></label>
                                             <div class="input-group mb-3">

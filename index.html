@@ -20,7 +20,15 @@
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"
         integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-P1SQZN4J1C"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
+        gtag('config', 'G-P1SQZN4J1C');
+    </script>
     <script>
         let totalCost = 0;
         $(document).ready(async () => {
@@ -226,9 +234,8 @@
                             height="120"></a>
                     <br /><br />
                     <div>
-                    <h3 style="display: inline-block">Forge Cloud Credit Calculator</h3>
-                    <span class="badge bg-light text-dark"
-                        style="vertical-align: top">BETA</span>
+                        <h3 style="display: inline-block">Forge Cloud Credit Calculator</h3>
+                        <span class="badge bg-light text-dark" style="vertical-align: top">BETA</span>
                     </div>
                 </center>
             </div>

@@ -128,7 +128,7 @@
                     let req = await fetch('data/' + files[e][f] + '.json');
                     if (!req.ok) return;
 
-                    data = (await req.text()).replaceAll('}}', '}},');
+                    data = (await req.text()).replace(/}}/g, '}},');
                     data = JSON.parse('[' + data.substring(0, data.length - 2) + ']');
 
                     data.forEach((record) => {

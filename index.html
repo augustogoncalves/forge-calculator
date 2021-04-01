@@ -174,11 +174,11 @@
                     break;
                 case 'MDSource':
                     title.html('Where is the model?');
-                    body.html('Autodesk products, like <strong>BIM 360 Document Manager</strong> (Docs), automatically prepare models for viewing. <strong>Fusion 360</strong> will prepare models for viewing only when a user first open on the interface.<br/><br/>If the model is stored somewhere else, it needs to be transferred to Forge OSS and then prepared for viewing.');
+                    body.html('Autodesk products, like <strong>BIM 360 Document Manager</strong> (Docs), automatically prepare models for viewing. <strong>Fusion 360</strong> will prepare models for viewing only when a user opens the model in the application. <br/><br/>If the model is stored somewhere else, it needs to be transferred to Forge OSS and then prepared for viewing.');
                     break;
                 case 'MDType':
                     title.html('Supported model formats');
-                    body.html('Please refer to a complete <a href="https://forge.autodesk.com/en/docs/model-derivative/v2/developers_guide/supported-translations/" target="_blank">list of support formats</a>.')
+                    body.html('Refer to the complete <a href="https://forge.autodesk.com/en/docs/model-derivative/v2/developers_guide/supported-translations/" target="_blank">list of support formats</a>.')
                     break;
                 case 'MDFrequency':
                     title.html('How often is the model updated?');
@@ -194,11 +194,11 @@
                     break;
                 case 'DAComplexity':
                     title.html('Script/code complexity');
-                    body.html('Based on thousands of other Design Automation executions, the suggested complexities are typical values observed on Design Automation services. <br/><br/>These are statistical values for your reference: <ul><li><strong>Super simple</strong>: minimum.</li><li><strong>Simple</strong>: median (50% of all executions).</li><li><strong>Average</strong>: average time.</li><li><strong>Complex</strong>: percentile 95 (95% of all executions).</li><li><strong>Super complex</strong>: maximum.</li></ul>If not sure, consider selecting <strong>Simple (median)</strong>, which is true for 50% of all Design Automation executions.');
+                    body.html('The complexity settings are based on thousands of other Design Automation executions. Choose from:: <ul><li><strong>Super simple</strong>: minimum.</li><li><strong>Simple</strong>: median.</li><li><strong>Average</strong>: average time.</li><li><strong>Complex</strong>: top five percent.</li><li><strong>Super complex</strong>: maximum.</li></ul>If not sure, consider selecting <strong>Simple (median)</strong>, which is true for 50% of all Design Automation executions.');
                     break;
                 case 'DAFrequency':
                     title.html('How often is this automation executed?');
-                    body.html('Consider how many models needs to be executed against this automation. <br/><br/>For instance: your automation checks every new Revit version uploaded, and your team update models 15 days per day (x 30 days, equals 450 executions per month).');
+                    body.html('Consider how many models you\'ll be using in this automation. <br/><br/>For instance: your automation checks every new Revit version uploaded, and your team updates 15 models per day (x 30 days, equals 450 executions per month).');
                     break;
                 case 'RCFrequency':
                     title.html('How often are pictures updated?');
@@ -240,10 +240,10 @@
                 </center>
             </div>
             <div class="col-12" style="padding: 20px;">
-                <span>This is a estimation tool that helps you figure out how many Cloud Credits you need a month
-                    for your Forge applications. A Cloud Credit is a virtual currency representing a unit of
-                    measurement required to perform tasks. Below are some of the most common tasks. For help
-                    estimating other tasks, please reach out to <a
+                <span>The Forge Cloud Credit Calculator (FCCC) helps you estimate the number of Cloud Credits you need
+                    in a month for your Forge applications. Use Cloud Credits to purchase cloud resources. The FCCC lets
+                    you calculate the number of credits or fractions of credits you need for common Forge tasks. If your
+                    task is not represented in the FCCC, reach out to <a
                         href="https://forge.autodesk.com/en/support/get-help">Forge Support</a>.</span>
             </div>
         </div>
@@ -260,17 +260,18 @@
                         <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
                             data-bs-parent="#accordionExample">
                             <div class="accordion-body">
-                                Please specify where the models are hosted, type, how many models and how often models
+                                Specify model location, type, how many models and how often models
                                 are updated (per month).
                                 <hr>
                                 <div class="row">
                                     <div class="col-3">
-                                        <label for="exampleDataList" class="form-label">Source <i
+                                        <label for="exampleDataList" class="form-label">Model Location <i
                                                 class="fas fa-info-circle" style="cursor:help"
                                                 onclick="showHelp('MDSource')"></i></label>
                                         <select class="form-select" aria-label="Default select example" id="MDSource">
                                             <option value="BIM360">BIM 360 Docs</option>
                                             <option value="Fusion">Fusion 360</option>
+                                            <option value="Vault">Vault</option>
                                             <option value="OneDrive">OneDrive</option>
                                             <option value="Dropbox">Dropbox</option>
                                             <option value="Box">Box</option>
@@ -307,8 +308,8 @@
                                         </div>
                                     </div>
                                     <div class="col-3">
-                                        <label for="exampleFormControlInput1" class="form-label">How often is
-                                            updated <i class="fas fa-info-circle" style="cursor:help"
+                                        <label for="exampleFormControlInput1" class="form-label">Updates per month <i
+                                                class="fas fa-info-circle" style="cursor:help"
                                                 onclick="showHelp('MDFrequency')"></i></label>
                                         <div class="input-group mb-3">
                                             <input type="number" class="form-control" id="MDFrequency" min="1"
@@ -349,8 +350,8 @@
                             data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <div class="accordion-body">
-                                    Please select the engine, total model size, how complex is the script/code and how
-                                    ofter is executed (per month).
+                                    Select the engine, total size of all models, and the complexity and frequency of
+                                    execution (per month) of the script/code.
                                     <hr>
                                     <div class="row">
                                         <div class="col-2">
@@ -377,8 +378,8 @@
                                             </div>
                                         </div>
                                         <div class="col-4">
-                                            <label for="DATimeComplexity" class="form-label">How complex is the
-                                                execution? <i class="fas fa-info-circle" style="cursor:help"
+                                            <label for="DATimeComplexity" class="form-label">Frequency of execution <i
+                                                    class="fas fa-info-circle" style="cursor:help"
                                                     onclick="showHelp('DAComplexity')"></i></label>
                                             <select class="form-select" aria-label="Default select example"
                                                 id="DAComplexity">
@@ -433,8 +434,8 @@
                         <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
                             data-bs-parent="#accordionExample">
                             <div class="accordion-body">
-                                Please specify how many pictures used, the picture quality (in Megapixel) and how often
-                                pictures are updated (per month).
+                                Specify the number of pictures, picture quality (in Megapixels), and frequency of
+                                updates (per month).
                                 <hr>
                                 <div class="row">
                                     <div class="col-3">
